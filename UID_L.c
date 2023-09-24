@@ -16,7 +16,7 @@ void show(SET X);
 int main() {
     SET A, B;
     int x;
-    char stanlee[] = "LKIHGFEDCB";
+    char stanlee[] = "FEDCBA";
     char carlo[] = "IHEB";
 
     for (x = 0; carlo[x] != '\0'; x++) {
@@ -30,7 +30,7 @@ int main() {
     show(A);
     show(B);
 
-    SET C = Intersection(A, B);
+    SET C = Union(A, B);
     show(C);
 
     return 0;
@@ -79,26 +79,26 @@ SET Union(SET A, SET B) {
 
         if (C_end != NULL) {
 
-            if (A->data < B->data) {
+            if (A->data <= B->data) {
                 (*C_end)->data = A->data;
+                if (A->data == B->data) {
+                    B = B->link;
+                }
                 A = A->link;
             } else {
-                if (A->data == B->data) {
-                    A = A->link;
-                }
                 (*C_end)->data = B->data;
                 B = B->link;
             }
             C_end = &(*C_end)->link;
         }
     }
+
     if (B != NULL) {
         A = B->link;
     }
 
     while (A != NULL) {
         *C_end = (SET)malloc(sizeof(c_type));
-
         if (C_end != NULL) {
             (*C_end)->data = A->data;
             A = A->link;
