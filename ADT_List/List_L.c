@@ -45,7 +45,7 @@ int main(void) {
                                    "Non-Fiction", 2050},
                                   200.00,
                                   {2017, "carlo"}});
-    insorted(&BookStore, (Book_t){1,
+    insorted(&BookStore, (Book_t){3,
                                   {"all the words are yours",
                                    "tyler knott gregson", "Poetry", 50},
                                   500.00,
@@ -103,7 +103,7 @@ Bool locate(List main, unsigned findID) {
          trav = trav->link) {
     }
     if (trav != NULL) {
-        printf("Book #%d Found!", findID);
+        printf("\nBook #%d Found!", findID);
     }
     return trav != NULL;
 }

@@ -12,8 +12,7 @@ typedef struct{
 }Queue;
 
 void Enqueue(Queue*,char);
-void Dequeue(Queue*);
-void Peek(Queue);
+char Dequeue(Queue*);
 void showQ(Queue);
 
 int main(){
@@ -24,8 +23,6 @@ int main(){
     showQ(A);
     Enqueue(&A,'c');
     showQ(A);
-    
-    Peek(A);
 
     showQ(A);
     Dequeue(&A);
@@ -50,17 +47,13 @@ void Enqueue(Queue* B,char data){
     }
 }
 
-void Dequeue(Queue* Q){
+char Dequeue(Queue* Q){
     lList del=NULL;
     if(Q->front!=NULL){
         del=Q->front;
         Q->front=del->link;
         free(del);
     }
-}
-
-void Peek(Queue O){
-    printf("\n\n Front: %c ",O.front->elem);
 }
 
 void showQ(Queue H){

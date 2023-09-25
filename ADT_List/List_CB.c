@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #define MAX 10
-
-typedef enum { false, true } Bool;
 
 typedef struct {
     int in;
@@ -30,7 +29,7 @@ typedef struct{
 } Node;
 
 typedef struct{
-    Node Nodes[MAX];
+    Node nodes[MAX];
     int Avail;
 } VirtualHeap;
 
@@ -40,7 +39,7 @@ void initVheap(VirtualHeap *);
 void insorted( VirtualHeap*, List*, Book_t);
 void deleteAt(VirtualHeap*,List*,Book_t);
 Book_t retrieve(VirtualHeap,List,unsigned);
-Bool isEmpty(List);
+bool isEmpty(List);
 void makeNull(VirtualHeap*,List*);
 void displayList(VirtualHeap,List );
 int allocSpace(VirtualHeap*);
@@ -51,12 +50,11 @@ int main(){
     List BookStore = -1;
 }
 
-
 void initVheap(VirtualHeap *);
 void insorted( VirtualHeap*, List*, Book_t);
 void deleteAt(VirtualHeap*,List*,Book_t);
 Book_t retrieve(VirtualHeap,List,unsigned);
-Bool isEmpty(List A){
+bool isEmpty(List A){
     return A == -1;
 }
 void makeNull(VirtualHeap*,List*);
