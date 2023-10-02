@@ -28,7 +28,7 @@ int main(void) {
     display(A);
     display(B);
 
-    C=setIntersection(A,B);
+    C=setUnion(A,B);
     display(*C);
 
 }

@@ -104,10 +104,10 @@ SET setUnion(SET A, SET B) {
         if (C_end != NULL) {
 
             if (A->Elem <= B->Elem) {
-                (*C_end)->Elem = A->Elem;
                 if (A->Elem == B->Elem) {
                     B = B->link;
                 }
+                (*C_end)->Elem = A->Elem;
                 A = A->link;
             } else {
                 (*C_end)->Elem = B->Elem;

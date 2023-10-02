@@ -91,10 +91,10 @@ SET setUnion(SET A, SET B) {
         *Cptr = allocSpace(&C);
         if (*Cptr != -1) {
             if (A.vHeap.nodes[A.head].Elem <= B.vHeap.nodes[B.head].Elem) {
-                C.vHeap.nodes[*Cptr].Elem = A.vHeap.nodes[A.head].Elem;
                 if (A.vHeap.nodes[A.head].Elem == B.vHeap.nodes[B.head].Elem) {
                     B.head = B.vHeap.nodes[B.head].nxt;
                 }
+                C.vHeap.nodes[*Cptr].Elem = A.vHeap.nodes[A.head].Elem;
                 A.head = A.vHeap.nodes[A.head].nxt;
             } else {
                 C.vHeap.nodes[*Cptr].Elem = B.vHeap.nodes[B.head].Elem;

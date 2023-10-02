@@ -70,7 +70,7 @@ void showVH(VH sh){
 }
 
 void deallocspc(List* front,VH* vHeap){
-    if(front >= 0 && front < MAX){
+    if(*front >= 0 && *front < MAX){
         vHeap->Node[*front].link=vHeap->Avail;
         vHeap->Avail=*front;
     }

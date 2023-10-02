@@ -22,10 +22,10 @@ int main(void) {
 
     displayBitPattern(carlo);
     displayElem(carlo);
-    printf("%s",isMember(carlo,5)? "TRUE":"FALSE");
+    printf("%s", isMember(carlo, 5) ? "TRUE" : "FALSE");
 }
 
-void insertElem(SET *A, unsigned char Elem) { *A |= 1 << Elem; }
+void insertElem(SET *A, unsigned char Elem) { *A |=  1 << Elem; }
 void deleteElem(SET *A, unsigned char Elem) { *A &= ~(1 << Elem); }
 bool isMember(SET A, unsigned char Elmo) { return A && (1 << Elmo); }
 SET setUnion(SET A, SET B) { return A | B; }
