@@ -124,14 +124,14 @@ int main() {
     printf("\n\n\nProblem #1:: ");
     printf("\n------------");
     // Declare variables needed for Problem #1
-    VHeap head;
-    cursorSet A;
+    VHeap heap;
+    cursorSet Cset;
 
     // Function Calls for Problem #1
-    initVHeap(&head);
-    A = initCursorSet(&head);
-    displayVHeap(head);
-    displaySet(A);
+    initVHeap(&heap);
+    Cset = initCursorSet(&heap);
+    displayVHeap(heap);
+    displaySet(Cset);
 
     /*---------------------------------------------------------------------------------
      * 	Problem #2 ::  1) Populates the Cursor set which is sorted in ascending
@@ -141,14 +141,9 @@ int main() {
     printf("\n\n\nProblem #2:: ");
     printf("\n------------");
     // Declare variables needed for Problem #2
-    int returnedValue;
-
-    returnedValue = mallocInVHeap(&head);
-    printf("\nReturned Value is %d", returnedValue);
     // Function Calls for Problem #2
-    populateSet(&A);
-    displayVHeap(head);
-    displaySet(A);
+    populateSet(&Cset);
+    displaySet(Cset);
 
     /*---------------------------------------------------------------------------------
      * 	Problem #3 ::  1) Converts the Cursor set into an Open Hash Dictionary *
@@ -158,9 +153,11 @@ int main() {
     printf("\n\n\nProblem #3:: ");
     printf("\n------------");
     // Declare variables needed for Problem #3
-
+    openDic OD;
     // Function Calls for Problem #3
-
+    OD = convertToOpenDict(&Cset);
+    displayOpenDict(OD);
+    displaySet(Cset);
     /*---------------------------------------------------------------------------------
      * 	Problem #4 ::  1) Perform 3 delete operations on the Open Hash
      *Dictionary     * 2) Displays the Open Hash Dictionary * 3) Displays the
@@ -174,6 +171,11 @@ int main() {
     char delete03[] = "1601";
 
     // Function Calls for Problem #4
+    deleteDict(&OD, delete01);
+    deleteDict(&OD, delete02);
+    deleteDict(&OD, delete03);
+    displayOpenDict(OD);
+    displayVHeap(heap);
 
     /*------------------------------------------------------------------------------------
      * 	Problem #5 :: 1) Converts the Open Hash Dictionary into a Closed Hash
@@ -183,8 +185,11 @@ int main() {
     printf("\n\n\nProblem #5:: ");
     printf("\n------------");
     // Declare variables needed for Problem #5
-
+    closeDic *clos;
     // Function Calls for Problem #5
+    clos = convertToCloseDict(&OD);
+    displayCloseDict(*clos);
+    displayVHeap(heap);
 
     return 0;
 }
@@ -195,19 +200,13 @@ int main() {
 void initVHeap(VHeap *VH) {
     int i;
     for (i = 0; i < VH_SIZE; i++) {
-        strcpy(VH->VH_node[i].elem.prodID, EMPTY);
+        strcpy(VH->VH_node[i].elem.prodID, "    ");
         VH->VH_node[i].next = i - 1;
     }
     VH->avail = VH_SIZE - 1;
 }
 
-cursorSet initCursorSet(VHeap *VH) {
-    cursorSet A;
-    A.VHptr = VH;
-    A.count = 0;
-    A.elemIndex = -1;
-    return A;
-}
+cursorSet initCursorSet(VHeap *VH) { return (cursorSet){-1, 0, VH}; }
 
 void displayVHeap(VHeap V) {
     // Variable Declaration here
@@ -247,7 +246,7 @@ void displaySet(cursorSet A) {
            "-----------");
 
     // Write your code here
-    for (x = A.elemIndex; x != -1; x = A.VHptr->VH_node[x].next) {
+    for (x = A.elemIndex; x != -1 && A.count!=0; x = A.VHptr->VH_node[x].next) {
         printf("\n%-7s%-12s%-15d%-10d", A.VHptr->VH_node[x].elem.prodID,
                A.VHptr->VH_node[x].elem.prodDesc.name,
                A.VHptr->VH_node[x].elem.prodDesc.weight, x);
@@ -332,13 +331,53 @@ void populateSet(cursorSet *A) {
 /************************************************************
  *  Problem 3:: Function Definitions                        *
  ************************************************************/
-int openHash(char *prodID) {}
+int openHash(char *prodID) {
+    int x, val = 0;
+    for (x = 0; prodID[x] != '\0'; x++) {
+        val += prodID[x] - '0';
+    }
+    return val % OPEN_DSIZE;
+}
 
-openDic initOpenDict(VHeap *VH) {}
+openDic initOpenDict(VHeap *VH) {
+    openDic A;
+    initVHeap(VH);
+    A.dicVHptr = VH;
+    A.count = 0;
+    int x;
+    for (x = 0; x < OPEN_DSIZE; x++) {
+        A.header[x] = -1;
+    }
+    return A;
+}
 
-openDic convertToOpenDict(cursorSet *A) {}
+openDic convertToOpenDict(cursorSet *A) {
+    VHeap temp = *(A->VHptr);
+    openDic retDict = initOpenDict(A->VHptr);
+    A->count = 0;
+
+    int x, *last;
+    for (x = A->elemIndex; x != -1; x = temp.VH_node[x].next) {
+        int ndx = openHash(temp.VH_node[x].elem.prodID);
+        int newnode = mallocInVHeap(retDict.dicVHptr);
+
+        if (newnode != -1) {
+            last = &retDict.header[ndx];
+            while (*last != -1) {
+                last = &retDict.dicVHptr->VH_node[*last].next;
+            }
+
+            retDict.dicVHptr->VH_node[newnode].next = -1;
+            retDict.dicVHptr->VH_node[newnode].elem = temp.VH_node[x].elem;
+            *last = newnode;
+            retDict.count++;
+        }
+    }
+    return retDict;
+}
 
 void displayOpenDict(openDic D) {
+    int x, y;
     // Variable declaration here
 
     printf("\n\nDetails of the Open Hash Dictionary:: ");
@@ -350,6 +389,12 @@ void displayOpenDict(openDic D) {
     printf("\n%-7s%15s", "------", "----------");
 
     // Write your code here
+    for (x = 0; x < OPEN_DSIZE && D.count != 0; x++) {
+        printf("\nGroup[%d] ::", x);
+        for (y = D.header[x]; y != -1; y = D.dicVHptr->VH_node[y].next) {
+            printf(" %-7s", D.dicVHptr->VH_node[y].elem.prodID);
+        }
+    }
 
     printf("\n\n");
     pause();
@@ -358,20 +403,74 @@ void displayOpenDict(openDic D) {
 /************************************************************
  *  Problem 4:: Function Definitions                        *
  ************************************************************/
-void freeInVHeap(VHeap *VH, int ndx) {}
+void freeInVHeap(VHeap *VH, int ndx) {
+    if (ndx > -1 && ndx < OPEN_DSIZE) {
+        VH->VH_node[ndx].next = VH->avail;
+        VH->avail = ndx;
+    }
+}
 
-void deleteDict(openDic *D, char *IDen) { pause(); }
+void deleteDict(openDic *D, char *IDen) {
+    if (D->count != 0) {
+        int *x;
+        int ndx = openHash(IDen);
+        int temp;
+        for (x = &D->header[ndx];
+             *x != -1 &&
+             strcmp(D->dicVHptr->VH_node[*x].elem.prodID, IDen) != 0;
+             x = &D->dicVHptr->VH_node[*x].next) {
+        }
+
+        if (*x != -1) {
+            temp = *x;
+            strcpy(D->dicVHptr->VH_node[temp].elem.prodID, "    ");
+            *x = D->dicVHptr->VH_node[temp].next;
+            freeInVHeap(D->dicVHptr, temp);
+            D->count--;
+        }
+    }
+}
 
 /************************************************************
  *  Problem 5:: Function Definitions                        *
  ************************************************************/
-int closeHash(char *ID) {}
+int closeHash(char *ID) {
+    int x, val = 0;
+    for (x = 0; ID[x] != '\0'; x++) {
+        val += ID[x] - '0';
+    }
+    return val % CLOSE_DSIZE;
+}
 
-void initCloseDict(closeDic CD) {}
+void initCloseDict(closeDic CD) {
+    int x;
+    for (x = 0; x < CLOSE_DSIZE; x++) {
+        strcpy(CD[x].prodID, EMPTY);
+    }
+}
 
-closeDic *convertToCloseDict(openDic *D) {}
+closeDic *convertToCloseDict(openDic *D) {
+    closeDic *CD = (closeDic *)malloc(sizeof(closeDic));
+    initCloseDict(*CD);
+    List L = {{}, -1};
+    int x, y;
+    for (x = 0; x < OPEN_DSIZE; x++) {
+        for (y = D->header[x]; y != -1; y = D->dicVHptr->VH_node[y].next) {
+            int ndx = closeHash(D->dicVHptr->VH_node[y].elem.prodID);
+            if (strcmp((*CD)[ndx].prodID, EMPTY) == 0) {
+                (*CD)[ndx] = D->dicVHptr->VH_node[y].elem;
+            } else {
+                L.last++;
+                L.prod[L.last] = D->dicVHptr->VH_node[y].elem;
+            }
+        }
+    }
+
+    return CD;
+}
 
 void displayCloseDict(closeDic CD) {
+    int x;
     // Variable declaration here
 
     printf("\n\nDetails of Closed Hash Dictionary :: ");
@@ -382,6 +481,9 @@ void displayCloseDict(closeDic CD) {
     printf("\n%-6s%-10s%-15s", "-----", "-------", "----------");
 
     // Write your code here
+    for (x = 0; x < CLOSE_DSIZE; x++) {
+        printf("\n%-6d%-10s%-15s", x, CD[x].prodID, CD[x].prodDesc.name);
+    }
 
     printf("\n\n");
     pause();
