@@ -103,14 +103,15 @@ SET setUnion(SET A, SET B) {
         *C_end = (SET)malloc(sizeof(c_type));
         if (C_end != NULL) {
 
-            if (A->Elem <= B->Elem) {
-                if (A->Elem == B->Elem) {
-                    B = B->link;
-                }
+            if (A->Elem < B->Elem) {
                 (*C_end)->Elem = A->Elem;
                 A = A->link;
-            } else {
+            } else if (A->Elem > B->Elem) {
                 (*C_end)->Elem = B->Elem;
+                B = B->link;
+            } else {
+                (*C_end)->Elem = A->Elem;
+                A = A->link;
                 B = B->link;
             }
             C_end = &(*C_end)->link;
@@ -164,4 +165,29 @@ void displayElem(SET X) {
         printf("%c", X->Elem);
     }
     printf("\n");
+}
+
+SET setUnionUnsorted(SET A, SET B) {
+    SET C = NULL;
+    SET *trav;
+
+    for (trav = &C; A != NULL; A = A->link) {
+        *trav = (SET)malloc(sizeof(struct node));
+        if (*trav != NULL) {
+            (*trav)->Elem = A->Elem;
+            trav = &(*trav)->link;
+        }
+    }
+    *trav = NULL;
+    for (trav = &C; *trav != NULL; trav = &(*trav)->link) {
+        SET check;
+        for (check = B; check != NULL && check->Elem != (*trav)->Elem; check = check->link) {}
+        if (check != NULL) {
+            SET newnode=(SET)malloc(sizeof(struct node));
+            newnode->link=*trav;
+            newnode->Elem=check->Elem;
+            *trav=newnode;
+        }
+    }
+    return C;
 }

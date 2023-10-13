@@ -23,15 +23,23 @@ typedef struct {
     pub_t published;
 } Book_t;
 
-typedef struct node{
-    Book_t book;
-    struct node *link;
-}*Node_p,Node;
 
-typedef struct{
-Node_p front;
-Node_p rear;
-}Queue;
+typedef struct {
+    Book_t book;
+    int link;
+} Node;
+
+typedef struct {
+    Node node[MAX];
+    int Avail;
+} VirtualHeap;
+
+typedef struct {
+    VirtualHeap VH;
+    int front;
+    int rear;
+} Queue;
+
 
 void initQueue(Queue *);
 void enQueue(Queue *, char);

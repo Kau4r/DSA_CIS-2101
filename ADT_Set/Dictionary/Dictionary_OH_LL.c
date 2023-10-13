@@ -1,7 +1,7 @@
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <ctype.h>
 
 #define MAX 10
 
@@ -35,7 +35,9 @@ void inSort(Dictionary D, char X) {
     int ndx = hash(X);
     List *trav;
     List new = (List)malloc(sizeof(struct node));
-    for (trav = &D[ndx]; *trav != NULL && X > D[ndx]->Letter; trav = &(*trav)->next) {}
+    for (trav = &D[ndx]; *trav != NULL && X > D[ndx]->Letter;
+         trav = &(*trav)->next) {
+    }
     new->Letter = X;
     new->next = *trav;
     *trav = new;
@@ -45,16 +47,22 @@ void delete(Dictionary D, char X) {
     int ndx = hash(X);
     List *trav;
     List del;
-    for (trav = &D[ndx]; *trav != NULL && X != D[ndx]->Letter; trav = &(*trav)->next) {}
-    del = *trav;
-    *trav = del->next;
-    free(del);
+    for (trav = &D[ndx]; *trav != NULL && X != D[ndx]->Letter;
+         trav = &(*trav)->next) {
+    }
+    if (*trav != NULL) {
+        del = *trav;
+        *trav = del->next;
+        free(del);
+    }
 }
 
 bool isMember(Dictionary D, char X) {
     int ndx = hash(X);
     List trav;
-    for (trav = D[ndx]; trav != NULL && X != D[ndx]->Letter; trav = trav->next) {}
+    for (trav = D[ndx]; trav != NULL && X != D[ndx]->Letter;
+         trav = trav->next) {
+    }
 
     return trav != NULL;
 }

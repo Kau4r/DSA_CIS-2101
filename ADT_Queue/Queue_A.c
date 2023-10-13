@@ -1,70 +1,64 @@
-#include <stdbool.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
 #define MAX 10
 
+typedef enum { false, true } Bool;
+
 typedef struct {
-    char elem[MAX];
-    int tail;
-    int head;
+    unsigned ID;
+    double price;
+    struct {
+        char title[24];
+        char author[24];
+        char genre[24];
+        unsigned short pages;
+    } desc;
+    struct {
+        int in;
+        char by[24];
+    } published;
+} Book_t;
+
+typedef struct {
+    Book_t book[MAX];
+    int front;
+    int rear;
 } Queue;
 
 void initQueue(Queue *);
-void enQueue(Queue *, char);
+void enQueue(Queue *, Book_t);
 void deQueue(Queue *);
 void showQueue(Queue);
+Bool isFull(Queue);
+Bool isEmpty(Queue);
 
-int main() {
-    Queue T;
-    initQueue(&T);
-    enQueue(&T, 'A');
-    enQueue(&T, 'B');
-    enQueue(&T, 'C');
-    enQueue(&T, 'D');
+int main() {}
 
-    showQueue(T);
-
-    deQueue(&T);
-    showQueue(T);
-
-    deQueue(&T);
-    deQueue(&T);
-
-    showQueue(T);
-
-    enQueue(&T, 'A');
-    enQueue(&T, 'B');
-    enQueue(&T, 'C');
-    showQueue(T);
+void initQueue(Queue *A) {
+    A->front = 0;
+    A->rear = -1;
 }
 
-void initQueue(Queue *Q) {
-    Q->tail = 7;
-    Q->head = 8;
+void enQueue(Queue *B, Book_t newBook) {
+    if (!isFull(*B)) {
+        B->rear = (1 + B->rear) % MAX;
+        B->book[B->rear]=newBook;
+    }
 }
-
-bool isFull(Queue T) { return (T.tail + 2) % MAX == T.head; }
-
-bool isEmpty(Queue Y) { return (Y.tail + 1) % MAX == Y.head; }
-
-void enQueue(Queue *W, char new) {
-    if (!isFull(*W)) {
-        W->tail = (W->tail + 1) % MAX;
-        W->elem[W->tail] = new;
+void deQueue(Queue *C) {
+    if (!isEmpty(*C)) {
+        C->front = (1 + C->front) % MAX;
+    }
+}
+void showQueue(Queue D) {
+    if (!isEmpty(D)) {
+        int x;
+        for (x = D.front; x != (D.rear + 1) % MAX;x=(D.front + 1) % MAX){
+            pritnf("\n%d",x);
+        }
     }
 }
 
-void deQueue(Queue *E) {
-    if (!isEmpty(*E)) {
-        E->head = (E->head + 1) % MAX;
-    }
-}
-
-void showQueue(Queue R) {
-    printf("\n\nQueue: ");
-    while (!isEmpty(R)) {
-        printf("\n%c", R.elem[R.head]);
-        R.head = (R.head + 1) % MAX;
-    }
-    printf("\n\n");
-}
+Bool isFull(Queue F) { return ((F.rear + 2) % MAX) == F.front; }
+Bool isEmpty(Queue G) { return ((G.rear + 1) % MAX) == G.front; }

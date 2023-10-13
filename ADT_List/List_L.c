@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define MAX 10
 
 typedef enum { false, true } Bool;
 
@@ -36,7 +35,7 @@ Bool locate(List, unsigned);
 Book_t retrieve(List, unsigned);
 Bool isEmpty(List);
 void makeNull(List *);
-void displayList(List main);
+void displayList(List);
 
 int main(void) {
     List BookStore = initList();
@@ -50,13 +49,14 @@ int main(void) {
                                    "tyler knott gregson", "Poetry", 50},
                                   500.00,
                                   {2012, "me"}});
-    
-    locate(BookStore, 2); 
-    
+    displayList(BookStore);
+
+    locate(BookStore, 2);
+
     insorted(&BookStore, retrieve(BookStore, 2));
-    
+
     deleteAt(&BookStore, 2);
-    
+
     makeNull(&BookStore);
 
     displayList(BookStore);
@@ -71,9 +71,7 @@ void insorted(List *main, Book_t newBook) {
     List newNode = (List)malloc(sizeof(Node));
     if (newNode != NULL) {
         List *trav;
-        for (trav = main; *trav != NULL && newBook.ID < (*trav)->book.ID;
-             trav = &(*trav)->link) {
-        }
+        for (trav = main; *trav != NULL && newBook.ID > (*trav)->book.ID ; trav = &(*trav)->link) {}
         newNode->link = *trav;
         newNode->book = newBook;
         *trav = newNode;
@@ -85,9 +83,7 @@ void deleteAt(List *main, int pos) {
     List *trav;
     List temp;
     int x;
-    for (trav = main, x = 0; *trav != NULL && x < pos - 1;
-         trav = &(*trav)->link, x++) {
-    }
+    for (trav = main, x = 0; *trav != NULL && x < pos - 1; trav = &(*trav)->link, x++) {}
     if (*trav != NULL) {
         temp = *trav;
         *trav = temp->link;
@@ -99,9 +95,7 @@ void deleteAt(List *main, int pos) {
 
 Bool locate(List main, unsigned findID) {
     List trav;
-    for (trav = main; trav != NULL && findID != trav->book.ID;
-         trav = trav->link) {
-    }
+    for (trav = main; trav != NULL && findID != trav->book.ID; trav = trav->link) {}
     if (trav != NULL) {
         printf("\nBook #%d Found!", findID);
     }
@@ -111,9 +105,7 @@ Bool locate(List main, unsigned findID) {
 Book_t retrieve(List main, unsigned findID) {
     List trav;
     Book_t retBook = {0U, {"xxxxx", "xxxxx", "xxxxx", 0U}, 0.0, {0, "xxxxx"}};
-    for (trav = main; trav != NULL && findID != trav->book.ID;
-         trav = trav->link) {
-    }
+    for (trav = main; trav != NULL && findID != trav->book.ID; trav = trav->link) {}
     if (trav != NULL) {
         retBook = trav->book;
         printf("\nBook #%d retrieved!", retBook.ID);
@@ -144,4 +136,5 @@ void displayList(List main) {
     for (trav = main; trav != NULL; trav = trav->link) {
         printf("\nBook #%d", trav->book.ID);
     }
+        printf("\n");
 }

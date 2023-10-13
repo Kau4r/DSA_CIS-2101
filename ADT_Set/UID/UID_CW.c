@@ -25,12 +25,13 @@ int main(void) {
     printf("%s", isMember(carlo, 5) ? "TRUE" : "FALSE");
 }
 
-void insertElem(SET *A, unsigned char Elem) { *A |=  1 << Elem; }
+void insertElem(SET *A, unsigned char Elem) { *A |= 1 << Elem; }
 void deleteElem(SET *A, unsigned char Elem) { *A &= ~(1 << Elem); }
 bool isMember(SET A, unsigned char Elmo) { return A && (1 << Elmo); }
 SET setUnion(SET A, SET B) { return A | B; }
 SET setIntersection(SET A, SET B) { return A & B; }
 SET setDifference(SET A, SET B) { return A & ~B; }
+
 void displayBitPattern(SET A) {
     int x;
     for (x = 1 << sizeof(SET) * 8 - 1; x > 0; x >>= 1) {
@@ -38,6 +39,8 @@ void displayBitPattern(SET A) {
     }
     printf("\n");
 }
+
+
 
 void displayElem(SET A) {
     int x = 1 << sizeof(SET) * 8 - 1, y;
